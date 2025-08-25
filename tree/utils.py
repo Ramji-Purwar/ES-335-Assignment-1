@@ -3,37 +3,49 @@ You can add your own functions here according to your decision tree implementati
 There is no restriction on following the below template, these fucntions are here to simply help you.
 """
 
+import numpy as np
 import pandas as pd
 
 def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
     """
     Function to perform one hot encoding on the input data
     """
+    X_encoded = pd.get_dummies(X, drop_first=True)
+    return X_encoded
 
-    pass
 
 def check_ifreal(y: pd.Series) -> bool:
     """
     Function to check if the given series has real or discrete values
     """
-
-    pass
+    if pd.api.types.is_numeric_dtype(y):
+        return True
+    return False
 
 
 def entropy(Y: pd.Series) -> float:
     """
     Function to calculate the entropy
     """
+    value_cnt = Y.value_counts()
+    probabilities = value_cnt / len(Y)
+    prob = probabilities.to_numpy()
 
-    pass
+    entropy_val = -np.sum(prob * np.log2(prob + 1e-9))
+
+    return entropy_val
 
 
 def gini_index(Y: pd.Series) -> float:
     """
     Function to calculate the gini index
     """
+    value_cnt = Y.value_counts()
+    probabilities = value_cnt / len(Y)
+    prob = probabilities.to_numpy()
 
-    pass
+    gini_indexx = 1 - np.sum(prob * prob)
+    return gini_indexx
 
 
 def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
@@ -41,7 +53,39 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
     Function to calculate the information gain using criterion (entropy, gini index or MSE)
     """
 
-    pass
+    if criterion == "entropy":
+        parent_impurity = entropy(Y)
+    elif criterion == "gini_index":
+        parent_impurity = gini_index(Y)
+    elif criterion == "mse":
+        parent_impurity = np.var(Y)
+    else:
+        raise ValueError(f"{criterion} not supported. Try among entropy, gini_index or mse.")
+
+    unique_values = attr.unique()
+    
+    weighted_child_impurity = 0.0
+    total_samples = len(Y)
+    
+    for value in unique_values:
+        child_y = Y[attr == value]
+        
+        if len(child_y) == 0:
+            continue
+            
+        weight = len(child_y) / total_samples
+        
+        if criterion == "entropy":
+            child_impurity = entropy(child_y)
+        elif criterion == "gini_index":
+            child_impurity = gini_index(child_y)
+        elif criterion == "mse":
+            child_impurity = np.var(child_y)
+        
+        weighted_child_impurity += weight * child_impurity
+    
+    info_gain = parent_impurity - weighted_child_impurity
+    return info_gain
 
 
 def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.Series):
