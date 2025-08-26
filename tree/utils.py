@@ -101,7 +101,19 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
 
     # According to wheather the features are real or discrete valued and the criterion, find the attribute from the features series with the maximum information gain (entropy or varinace based on the type of output) or minimum gini index (discrete output).
 
-    pass
+    best_attr = None
+    best_score = -np.inf if criterion in ["entropy", "mse"] else np.inf
+
+    for attr in features:
+        score = information_gain(y, X[attr], criterion)
+        if(criterion in ["entropy", "mse"] and score > best_score):
+            best_score = score
+            best_attr = attr
+        elif(criterion == "gini_index" and score < best_score):
+            best_score = score
+            best_attr = attr
+
+    return best_attr
 
 
 def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
@@ -117,5 +129,7 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
     """
 
     # Split the data based on a particular value of a particular attribute. You may use masking as a tool to split the data.
+
+    
 
     pass
