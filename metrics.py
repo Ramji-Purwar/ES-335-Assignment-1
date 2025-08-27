@@ -1,5 +1,6 @@
 from typing import Union
 import pandas as pd
+import numpy as np
 
 
 def accuracy(y_hat: pd.Series, y: pd.Series) -> float:
@@ -14,21 +15,38 @@ def accuracy(y_hat: pd.Series, y: pd.Series) -> float:
     """
     assert y_hat.size == y.size
     # TODO: Write here
-    pass
+
+    correct_predictions = (y_hat == y).sum()
+    accuracy = correct_predictions / y.size
+    return accuracy
 
 
 def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
     """
     Function to calculate the precision
     """
-    pass
+
+    assert y_hat.size == y.size
+    # TODO: Write here
+
+    true_positives = ((y_hat == cls) & (y == cls)).sum()
+    false_positives = ((y_hat == cls) & (y != cls)).sum()
+    precision = true_positives / (true_positives + false_positives + 1e-9)
+    return precision
 
 
 def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
     """
     Function to calculate the recall
     """
-    pass
+
+    assert y_hat.size == y.size
+    # TODO: Write here
+
+    true_positives = ((y_hat == cls) & (y == cls)).sum()
+    false_negatives = ((y_hat != cls) & (y == cls)).sum()
+    recall = true_positives / (true_positives + false_negatives + 1e-9)
+    return recall
 
 
 def rmse(y_hat: pd.Series, y: pd.Series) -> float:
@@ -36,11 +54,22 @@ def rmse(y_hat: pd.Series, y: pd.Series) -> float:
     Function to calculate the root-mean-squared-error(rmse)
     """
 
-    pass
+    assert y_hat.size == y.size
+    # TODO: Write here
+
+    squared_errors = (y_hat - y) ** 2
+    rmse = np.sqrt(squared_errors.mean())
+    return rmse
 
 
 def mae(y_hat: pd.Series, y: pd.Series) -> float:
     """
     Function to calculate the mean-absolute-error(mae)
     """
-    pass
+
+    assert y_hat.size == y.size
+    # TODO: Write here
+
+    absolute_errors = (y_hat - y).abs()
+    mae = absolute_errors.mean()
+    return mae
