@@ -130,6 +130,8 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
 
     # Split the data based on a particular value of a particular attribute. You may use masking as a tool to split the data.
 
-    
+    mask = X[attribute] == value
+    X_split = X[mask]
+    y_split = y[mask]
 
-    pass
+    return X_split, y_split
